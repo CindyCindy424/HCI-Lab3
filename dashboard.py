@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Author  : Deng Xinling
 # @Time    : 2021/6/24 0:07
-# @Function:
+# @Function: Lab3 for HCI course in TONGJI SSE
 
 import dash
 import dash_core_components as dcc
@@ -13,11 +13,6 @@ import plotly.express as px
 
 app = dash.Dash()
 
-# df1 = pd.read_csv(r'./dataset/degrees-that-pay-back.csv')
-# # df1 = df1.T  # 转置df1
-# df2 = pd.read_csv(r'./dataset/salaries-by-college-type.csv')
-# df3 = pd.read_csv(r'./dataset/salaries-by-region.csv')
-
 df = pd.read_csv(r'./dataset/googleplaystore.csv')
 df2 = pd.read_csv(r'./dataset/googleplaystore-byrating.csv')
 
@@ -28,6 +23,17 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 available_indicators = df['Category'].unique()
 
 app.layout = html.Div([
+    dcc.Markdown('''
+    ### Lab3 - Data Visualization
+    #### Author: 1850477 邓欣凌
+    ###### Dataset: Google Play Store Apps
+    -------------------------
+    ##### Visualization 1
+    
+    '''),
+    html.Br(),
+    html.Div("Choose a category for the app from the list below!"),
+    html.Br(),
     dcc.Dropdown(id='category',
                  options=[{
                      'label': i,
@@ -35,7 +41,20 @@ app.layout = html.Div([
                  } for i in available_indicators],  # 下拉框的项为软件分类列表
                  value='ART_AND_DESIGN'),
     dcc.Graph(id='graph1'),
+    dcc.Markdown('''
+    -------
+    ##### Visualization 2
+    
+    '''),
+    html.Br(),
     dcc.Graph(id='graph2'),
+
+    dcc.Markdown('''
+    -------
+    ##### Visualization 3
+
+    '''),
+    html.Br(),
     html.P("Select Distribution:"),
     dcc.RadioItems(
         id='dist-marginal',
@@ -44,9 +63,23 @@ app.layout = html.Div([
         value='box'
     ),
     dcc.Graph(id="graph3"),
-    dcc.Graph(id="pie-chart",
-              figure=px.pie(df2, values='Number of Apps', names='Category', title='Proportion of different app types'))
+    dcc.Markdown('''
+    -------
+    ##### Visualization 4
 
+    '''),
+    html.Br(),
+    dcc.Graph(id="pie-chart",
+              figure=px.pie(df2, values='Number of Apps', names='Category', title='Proportion of different app types')),
+    dcc.Markdown('''
+    -------
+    ##### Visualization 5
+    '''),
+    html.Br(),
+    dcc.Graph(id='graph5',
+              figure=px.bar_polar(df2, r='Number of Apps', theta='Category', color='Rating Range',
+                                  color_discrete_sequence=px.colors.sequential.Plasma_r)
+              )
 ])
 
 
@@ -56,7 +89,7 @@ app.layout = html.Div([
 def update_figure(selected_category):
     filtered_df = df[df['Category'] == selected_category]
 
-    fig = px.scatter(filtered_df, x="Installs", y="Rating",
+    fig = px.scatter(filtered_df, x="Reviews", y="Rating",
                      size="Reviews", color="Type", hover_name="App",
                      size_max=100)
 
